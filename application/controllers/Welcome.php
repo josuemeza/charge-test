@@ -51,6 +51,7 @@ class Welcome extends CI_Controller {
 		$this->db->join('titles as t', 'e.emp_no = t.emp_no', 'inner');
 		$this->db->join('dept_emp as de', 'e.emp_no = de.emp_no', 'inner');
 		$this->db->join('departments as d', 'de.dept_no = d.dept_no', 'inner');
+		$this->db->where('s.salary >', 100000);
 		$this->db->group_by('e.emp_no');
 		$this->db->order_by('e.emp_no', 'ASC');
 		$this->db->limit($this->limit);
