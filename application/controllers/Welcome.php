@@ -4,19 +4,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Welcome extends CI_Controller {
 
 	private $limit = 100;
+	private $cacheTime = 10;	// Minutes
 
-	public function readEmployees() {
-		$i = $this->input->post('page') != '' ? $this->input->post('page') : 1;
+	public function readEmployees($i) {
+		$this->output->cache($this->cacheTime);
 		$this->db->select('emp_no, birth_date, first_name, last_name, gender, hire_date');
 		$this->db->from('employees');
 		$this->db->order_by('emp_no', 'ASC');
 		$this->db->limit($this->limit, $this->limit*($i-1));
 		$response = $this->db->get();
-		echo json_encode($response->result());
+		$this->load->view('export', array('data' => json_encode($response->result())));
 	}
 
-	public function readProductionEmployees() {
-		$i = $this->input->post('page') != '' ? $this->input->post('page') : 1;
+	public function readProductionEmployees($i) {
+		$this->output->cache($this->cacheTime);
 		$this->db->select('
 			e.emp_no, 
 			e.first_name, 
@@ -36,11 +37,11 @@ class Welcome extends CI_Controller {
 		$this->db->order_by('e.emp_no', 'ASC');
 		$this->db->limit($this->limit, $this->limit*($i-1));
 		$response = $this->db->get();
-		echo json_encode($response->result());
+		$this->load->view('export', array('data' => json_encode($response->result())));
 	}
 
-	public function readFullEmployees() {
-		$i = $this->input->post('page') != '' ? $this->input->post('page') : 1;
+	public function readFullEmployees($i) {
+		$this->output->cache($this->cacheTime);
 		$this->db->select('
 			e.emp_no, 
 			e.first_name, 
@@ -59,38 +60,44 @@ class Welcome extends CI_Controller {
 		$this->db->order_by('e.emp_no', 'ASC');
 		$this->db->limit($this->limit, $this->limit*($i-1));
 		$response = $this->db->get();
-		echo json_encode($response->result());
+		$this->load->view('export', array('data' => json_encode($response->result())));
 	}
 
-	public function employees() {
+	public function employees($i = 1) {
 		$contentViewBag = array(
 			'type' => 'readEmployees',
 			'method' => site_url('welcome/readEmployees'),
-			'limit' => $this->limit
+			'view' => site_url('welcome/employees'),
+			'limit' => $this->limit,
+			'page' => $i
 		);
 		$this->load->view('employees', $contentViewBag);
 	}
 
-	public function productionEmployees() {
+	public function productionEmployees($i = 1) {
 		$contentViewBag = array(
 			'type' => 'readProductionEmployees',
 			'method' => site_url('welcome/readProductionEmployees'),
-			'limit' => $this->limit
+			'view' => site_url('welcome/productionEmployees'),
+			'limit' => $this->limit,
+			'page' => $i
 		);
 		$this->load->view('fullemployees', $contentViewBag);
 	}
 
-	public function fullEmployees() {
+	public function fullEmployees($i = 1) {
 		$contentViewBag = array(
 			'type' => 'readFullEmployees',
 			'method' => site_url('welcome/readFullEmployees'),
-			'limit' => $this->limit
+			'view' => site_url('welcome/fullEmployees'),
+			'limit' => $this->limit,
+			'page' => $i
 		);
 		$this->load->view('fullemployees', $contentViewBag);
 	}
 
 	public function index() {
-		redirect('welcome/employees');
+		redirect('welcome/employees/1');
 	}
 
 }
