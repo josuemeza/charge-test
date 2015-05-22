@@ -10,6 +10,13 @@
 		<a href="<?= site_url('welcome/productionEmployees'); ?>">Empleados ingenieros de producción</a>
 		<a href="<?= site_url('welcome/fullEmployees'); ?>">Empleados con salario, título y departamento</a>
 	</div>
+    <div>
+        <?php if($index>1) { ?>
+        <a href="<?= site_url(array('welcome/employees', $index-1)); ?>">Atras</a>
+        <?php } ?>
+        <span><?= (($index-1) * $limit) + 1; ?> a <?= $index * $limit; ?></span>
+        <a href="<?= site_url(array('welcome/employees', $index+1)); ?>">Siguiente</a>
+    </div>
     <table>
         <thead>
             <tr>
