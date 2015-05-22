@@ -3,18 +3,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Welcome extends CI_Controller {
 
-	private $limit = 50000;
+	private $limit = 100;
 
 	public function readEmployees() {
+		$i = $this->input->post('page') != '' ? $this->input->post('page') : 1;
 		$this->db->select('emp_no, birth_date, first_name, last_name, gender, hire_date');
 		$this->db->from('employees');
 		$this->db->order_by('emp_no', 'ASC');
-		$this->db->limit($this->limit);
+		$this->db->limit($this->limit, $this->limit*($i-1));
 		$response = $this->db->get();
 		echo json_encode($response->result());
 	}
 
 	public function readProductionEmployees() {
+		$i = $this->input->post('page') != '' ? $this->input->post('page') : 1;
 		$this->db->select('
 			e.emp_no, 
 			e.first_name, 
@@ -32,12 +34,13 @@ class Welcome extends CI_Controller {
 		$this->db->where('d.dept_name', 'Production');
 		$this->db->group_by('e.emp_no');
 		$this->db->order_by('e.emp_no', 'ASC');
-		$this->db->limit($this->limit);
+		$this->db->limit($this->limit, $this->limit*($i-1));
 		$response = $this->db->get();
 		echo json_encode($response->result());
 	}
 
 	public function readFullEmployees() {
+		$i = $this->input->post('page') != '' ? $this->input->post('page') : 1;
 		$this->db->select('
 			e.emp_no, 
 			e.first_name, 
@@ -54,7 +57,7 @@ class Welcome extends CI_Controller {
 		$this->db->where('s.salary >', 100000);
 		$this->db->group_by('e.emp_no');
 		$this->db->order_by('e.emp_no', 'ASC');
-		$this->db->limit($this->limit);
+		$this->db->limit($this->limit, $this->limit*($i-1));
 		$response = $this->db->get();
 		echo json_encode($response->result());
 	}
@@ -62,7 +65,8 @@ class Welcome extends CI_Controller {
 	public function employees() {
 		$contentViewBag = array(
 			'type' => 'readEmployees',
-			'method' => site_url('welcome/readEmployees')
+			'method' => site_url('welcome/readEmployees'),
+			'limit' => $this->limit
 		);
 		$this->load->view('employees', $contentViewBag);
 	}
@@ -70,7 +74,8 @@ class Welcome extends CI_Controller {
 	public function productionEmployees() {
 		$contentViewBag = array(
 			'type' => 'readProductionEmployees',
-			'method' => site_url('welcome/readProductionEmployees')
+			'method' => site_url('welcome/readProductionEmployees'),
+			'limit' => $this->limit
 		);
 		$this->load->view('fullemployees', $contentViewBag);
 	}
@@ -78,7 +83,8 @@ class Welcome extends CI_Controller {
 	public function fullEmployees() {
 		$contentViewBag = array(
 			'type' => 'readFullEmployees',
-			'method' => site_url('welcome/readFullEmployees')
+			'method' => site_url('welcome/readFullEmployees'),
+			'limit' => $this->limit
 		);
 		$this->load->view('fullemployees', $contentViewBag);
 	}
